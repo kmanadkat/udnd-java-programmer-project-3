@@ -86,6 +86,10 @@ public class SecurityService {
         statusListeners.remove(statusListener);
     }
 
+    public Set<StatusListener> getStatusListeners(){
+        return statusListeners;
+    }
+
     /**
      * Change the alarm status of the system and notify all listeners.
      * @param status
@@ -124,7 +128,7 @@ public class SecurityService {
      * @param active
      */
     public void changeSensorActivationStatus(Sensor sensor, Boolean active) {
-        AlarmStatus alarmStatus = securityRepository.getAlarmStatus();
+        AlarmStatus alarmStatus = this.getAlarmStatus();
         // When System is not in ALARM (PENDING or NO ALARM)
         if(alarmStatus != AlarmStatus.ALARM) {
             // Activate Sensor
@@ -135,6 +139,9 @@ public class SecurityService {
             else if (sensor.getActive() && !active) {
                 handleSensorDeactivated();
             }
+        }
+        else if(this.getArmingStatus() == ArmingStatus.DISARMED) {
+            handleSensorDeactivated();
         }
         // Update State & Repository
         sensor.setActive(active);

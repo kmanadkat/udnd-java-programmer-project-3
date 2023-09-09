@@ -182,4 +182,38 @@ class SecurityServiceTest {
         // Verify
         Mockito.verify(securityRepository).setAlarmStatus(AlarmStatus.ALARM);
     }
+
+    //======================= Coverage =======================
+    @Test
+    @DisplayName("Coverage: handleSensorDeactivated -> case ALARM")
+    void alarmStatus_deactivateSensor_checkPendingAlarm(){
+        // Initial Setup
+        Mockito.when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        Mockito.when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
+        // Call handleSensorDeactivated
+        securityService.changeSensorActivationStatus(sensor_1, false);
+        // Verify - Pending Alarm
+        Mockito.verify(securityRepository).setAlarmStatus(AlarmStatus.PENDING_ALARM);
+    }
+
+    @Test
+    @DisplayName("Coverage: Add & Remove Sensor")
+    void addSensor_removeSensor(){
+        securityService.addSensor(sensor_1);
+        // Verify - Addition
+        Mockito.verify(securityRepository).addSensor(sensor_1);
+
+        securityService.removeSensor(sensor_1);
+        // Verify - Removal
+        Mockito.verify(securityRepository).removeSensor(sensor_1);
+    }
+
+    @Test
+    @DisplayName("Coverage: Add & Remove Status Listeners")
+    void addListener_removeListener(){
+        securityService.addStatusListener(statusListener);
+        securityService.removeStatusListener(statusListener);
+        // Verify - No Listeners
+        assert(securityService).getStatusListeners().isEmpty();
+    }
 }
