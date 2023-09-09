@@ -36,19 +36,19 @@ public class SecurityService {
      * @param armingStatus
      */
     public void setArmingStatus(ArmingStatus armingStatus) {
-        // If the system is disarmed, set the status to no alarm.
+        // 9. If the system is disarmed, set the status to no alarm.
         if (armingStatus == ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
         }
-        // If cat detected in Armed Home -> ALARM
+        // 7. If the camera image contains a cat while the system is armed-home, put the system into alarm status.
         else if (catDetection && armingStatus == ArmingStatus.ARMED_HOME){
             setAlarmStatus(AlarmStatus.ALARM);
         }
+        // 10. If the system is armed, reset all sensors to inactive.
         else {
             Set<Sensor> sensors = new HashSet<>(getSensors());
             sensors.forEach(sensor -> changeSensorActivationStatus(sensor,false));
         }
-        // If the system is armed, reset all sensors to inactive.
         statusListeners.forEach(StatusListener :: sensorStatusChanged);
         securityRepository.setArmingStatus(armingStatus);
     }
@@ -62,10 +62,12 @@ public class SecurityService {
         catDetection = cat;
         boolean noSensorsActive = getSensors().stream().noneMatch(Sensor::getActive);
 
-        // If cat detected in Armed Home or Armed Away -> ALARM
+        // 11. If the system is armed-home while the camera shows a cat, set the alarm status to alarm.
         if(cat && getArmingStatus() == ArmingStatus.ARMED_HOME) {
             setAlarmStatus(AlarmStatus.ALARM);
-        } else if(!cat && noSensorsActive) {
+        }
+        // 8. If the camera image does not contain a cat, change the status to no alarm as long as the sensors are not active.
+        else if(!cat && noSensorsActive) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
         }
 
@@ -123,17 +125,25 @@ public class SecurityService {
      */
     public void changeSensorActivationStatus(Sensor sensor, Boolean active) {
         AlarmStatus alarmStatus = securityRepository.getAlarmStatus();
-        if(alarmStatus!=AlarmStatus.ALARM) {
+        // When System is not in ALARM (PENDING or NO ALARM)
+        if(alarmStatus != AlarmStatus.ALARM) {
+            // Activate Sensor
             if (!sensor.getActive() && active) {
                 handleSensorActivated();
-            } else if (sensor.getActive() && !active) {
+            }
+            // Deactivate Sensor
+            else if (sensor.getActive() && !active) {
                 handleSensorDeactivated();
             }
         }
-        if(alarmStatus==AlarmStatus.ALARM){
-            if(sensor.getActive() && !active)
+        // When System is in ALARM
+        if(alarmStatus == AlarmStatus.ALARM){
+            // Deactivate Sensor
+            if(sensor.getActive() && !active) {
                 handleSensorDeactivated();
+            }
         }
+        // Update State & Repository
         sensor.setActive(active);
         securityRepository.updateSensor(sensor);
     }
