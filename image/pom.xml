@@ -12,6 +12,7 @@
     <groupId>org.example</groupId>
     <artifactId>image</artifactId>
     <packaging>jar</packaging>
+    <name>image</name>
 
     <properties>
         <maven.compiler.source>20</maven.compiler.source>
