@@ -11,31 +11,26 @@
 
   <name>catpoint-parent</name>
   <url>http://www.example.com</url>
-
   <modules>
-    <module>imageService</module>
-    <module>securityService</module>
+    <module>image</module>
+    <module>security</module>
   </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>20</maven.compiler.source>
-    <maven.compiler.target>20</maven.compiler.target>
+    <maven.compiler.source>14</maven.compiler.source>
+    <maven.compiler.target>14</maven.compiler.target>
   </properties>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>32.1.2-jre</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.miglayout/miglayout -->
-    <dependency>
-      <groupId>com.miglayout</groupId>
-      <artifactId>miglayout</artifactId>
-      <version>3.7.4</version>
-    </dependency>
+
+
     <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
