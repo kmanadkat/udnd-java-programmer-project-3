@@ -136,13 +136,6 @@ public class SecurityService {
                 handleSensorDeactivated();
             }
         }
-        // When System is in ALARM
-        if(alarmStatus == AlarmStatus.ALARM){
-            // Deactivate Sensor
-            if(sensor.getActive() && !active) {
-                handleSensorDeactivated();
-            }
-        }
         // Update State & Repository
         sensor.setActive(active);
         securityRepository.updateSensor(sensor);
