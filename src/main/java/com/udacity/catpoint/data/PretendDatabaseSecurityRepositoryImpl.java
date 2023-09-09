@@ -2,6 +2,10 @@ package com.udacity.catpoint.data;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.udacity.securityService.data.AlarmStatus;
+import com.udacity.securityService.data.ArmingStatus;
+import com.udacity.securityService.data.SecurityRepository;
+import com.udacity.securityService.data.Sensor;
 
 import java.lang.reflect.Type;
 import java.util.Set;
