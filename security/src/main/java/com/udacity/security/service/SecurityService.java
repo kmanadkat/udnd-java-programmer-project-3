@@ -23,6 +23,7 @@ public class SecurityService {
     private FakeImageService imageService;
     private SecurityRepository securityRepository;
     private Set<StatusListener> statusListeners = new HashSet<>();
+    private boolean catDetection = false;
 
     public SecurityService(SecurityRepository securityRepository, FakeImageService imageService) {
         this.securityRepository = securityRepository;
@@ -35,8 +36,13 @@ public class SecurityService {
      * @param armingStatus
      */
     public void setArmingStatus(ArmingStatus armingStatus) {
-        if(armingStatus == ArmingStatus.DISARMED) {
+        // If the system is disarmed, set the status to no alarm.
+        if (armingStatus == ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
+        }
+        // If cat detected in Armed Home or Armed Away -> ALARM
+        if (catDetection && armingStatus != ArmingStatus.DISARMED){
+            setAlarmStatus(AlarmStatus.ALARM);
         }
         securityRepository.setArmingStatus(armingStatus);
     }
@@ -47,7 +53,9 @@ public class SecurityService {
      * @param cat True if a cat is detected, otherwise false.
      */
     private void catDetected(Boolean cat) {
-        if(cat && getArmingStatus() == ArmingStatus.ARMED_HOME) {
+        catDetection = cat;
+        // If cat detected in Armed Home or Armed Away -> ALARM
+        if(cat && getArmingStatus() != ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.ALARM);
         } else {
             setAlarmStatus(AlarmStatus.NO_ALARM);
