@@ -40,10 +40,16 @@ public class SecurityService {
         if (armingStatus == ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
         }
-        // If cat detected in Armed Home or Armed Away -> ALARM
-        if (catDetection && armingStatus != ArmingStatus.DISARMED){
+        // If cat detected in Armed Home -> ALARM
+        else if (catDetection && armingStatus == ArmingStatus.ARMED_HOME){
             setAlarmStatus(AlarmStatus.ALARM);
         }
+        else {
+            Set<Sensor> sensors = new HashSet<>(getSensors());
+            sensors.forEach(sensor -> changeSensorActivationStatus(sensor,false));
+        }
+        // If the system is armed, reset all sensors to inactive.
+        statusListeners.forEach(StatusListener :: sensorStatusChanged);
         securityRepository.setArmingStatus(armingStatus);
     }
 
@@ -54,10 +60,12 @@ public class SecurityService {
      */
     private void catDetected(Boolean cat) {
         catDetection = cat;
+        boolean noSensorsActive = getSensors().stream().noneMatch(Sensor::getActive);
+
         // If cat detected in Armed Home or Armed Away -> ALARM
-        if(cat && getArmingStatus() != ArmingStatus.DISARMED) {
+        if(cat && getArmingStatus() == ArmingStatus.ARMED_HOME) {
             setAlarmStatus(AlarmStatus.ALARM);
-        } else {
+        } else if(!cat && noSensorsActive) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
         }
 
@@ -114,10 +122,17 @@ public class SecurityService {
      * @param active
      */
     public void changeSensorActivationStatus(Sensor sensor, Boolean active) {
-        if(!sensor.getActive() && active) {
-            handleSensorActivated();
-        } else if (sensor.getActive() && !active) {
-            handleSensorDeactivated();
+        AlarmStatus alarmStatus = securityRepository.getAlarmStatus();
+        if(alarmStatus!=AlarmStatus.ALARM) {
+            if (!sensor.getActive() && active) {
+                handleSensorActivated();
+            } else if (sensor.getActive() && !active) {
+                handleSensorDeactivated();
+            }
+        }
+        if(alarmStatus==AlarmStatus.ALARM){
+            if(sensor.getActive() && !active)
+                handleSensorDeactivated();
         }
         sensor.setActive(active);
         securityRepository.updateSensor(sensor);
