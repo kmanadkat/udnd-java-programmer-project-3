@@ -42,6 +42,11 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0</version>
+          <configuration>
+            <argLine>
+              --add-opens com.udacity.catpoint.security/com.udacity.catpoint.service=ALL-UNNAMED
+            </argLine>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
