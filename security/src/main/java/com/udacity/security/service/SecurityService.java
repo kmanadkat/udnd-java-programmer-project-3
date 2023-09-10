@@ -40,14 +40,14 @@ public class SecurityService {
         if (armingStatus == ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
         }
-        // 7. If the camera image contains a cat while the system is armed-home, put the system into alarm status.
-        else if (catDetection && armingStatus == ArmingStatus.ARMED_HOME){
-            setAlarmStatus(AlarmStatus.ALARM);
-        }
         // 10. If the system is armed, reset all sensors to inactive.
-        else {
+        if (armingStatus != ArmingStatus.DISARMED) {
             Set<Sensor> sensors = new HashSet<>(getSensors());
             sensors.forEach(sensor -> changeSensorActivationStatus(sensor,false));
+        }
+        // 7. If the camera image contains a cat while the system is armed-home, put the system into alarm status.
+        if (catDetection && armingStatus == ArmingStatus.ARMED_HOME){
+            setAlarmStatus(AlarmStatus.ALARM);
         }
         statusListeners.forEach(StatusListener :: sensorStatusChanged);
         securityRepository.setArmingStatus(armingStatus);

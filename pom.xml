@@ -44,7 +44,7 @@
           <version>3.0.0</version>
           <configuration>
             <argLine>
-              --add-opens com.udacity.catpoint.security/com.udacity.catpoint.service=ALL-UNNAMED
+              --add-opens com.udacity.security/com.udacity.security.service=ALL-UNNAMED
             </argLine>
           </configuration>
         </plugin>
