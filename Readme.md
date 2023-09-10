@@ -13,6 +13,8 @@ UdaSecurity is a Java application that simulates a security system for detecting
 
 <img src="./readme-media/snap.png" />
 
+![](./executable_jar.png)
+
 ### Project Requirements
 
 - Splitting project into modules
