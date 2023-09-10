@@ -1,7 +1,6 @@
 # Generic #
 **/.DS_Store
 .idea
-target/
 
 # Package Files #
 *.jar

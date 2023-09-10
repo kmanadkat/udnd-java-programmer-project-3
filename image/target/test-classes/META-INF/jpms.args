@@ -1,0 +1,4 @@
+--patch-module
+com.udacity.image=_
+--add-reads
+com.udacity.image=ALL-UNNAMED
